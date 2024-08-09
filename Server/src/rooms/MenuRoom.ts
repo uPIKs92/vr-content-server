@@ -59,14 +59,14 @@ export class Menu extends Room<MenuState> {
         const joinUser = await connectDB
                 .getRepository(Join_User)
                 .createQueryBuilder("join_user")
-                .where("join_user.username like :username", { username: options.username })
+                .where("join_user.username = :username", { username: options.username })
                 .getMany();
 
         const userVmt = await connectDB
                 .getRepository(Uservmt)
                 .createQueryBuilder("uservmt")
                 .where("uservmt.id_user = :id_user", { id_user: options.id_user })
-                .andWhere("uservmt.username like :username", { username:`%${options.username}%` })
+                .andWhere("uservmt.username = :username", { username:options.username })
                 .getOne();
 
         var valueJoin = joinUser.length;
