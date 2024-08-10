@@ -1,8 +1,8 @@
 {
     "type": "postgres",
-    "host": "192.168.0.75",
+    "host": "10.10.1.26",
     "port": 5432,
     "username": "postgres",
-    "password": "admin1234",
-    "database": "vmt_database_senjata"
+    "password": "postgres",
+    "database": "virtual_reality"
  }
