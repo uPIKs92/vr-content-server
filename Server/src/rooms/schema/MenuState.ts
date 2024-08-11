@@ -108,14 +108,14 @@ export class MenuState extends Schema
                     .getRepository(Join_User)
                     .createQueryBuilder("join_user")
                     .delete()
-                    .where("join_user.username = :username", { username: user.username })
+                    .where("join_user.username like :username", { username: `%${user.username}%`})
                     .execute()
                 await connectDB
                     .getRepository(Uservmt)
                     .createQueryBuilder("uservmt")
                     .update()
                     .set({ id_exercise: 0, scenario: " "})
-                    .where("uservmt.username = :username", { username: user.username })
+                    .where("uservmt.username like :username", { username: `%${user.username}`})
                     .execute()
             }
         })

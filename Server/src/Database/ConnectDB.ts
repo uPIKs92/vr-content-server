@@ -67,7 +67,7 @@ export class Archive_Report {
 
 @Entity()
 export class Scenario_Action {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn("int")
     id: number;
     @Column("varchar", { length: 100 })
     actions_name: string;
@@ -83,7 +83,7 @@ export class Scenario_Action {
 
 @Entity()
 export class Exercise {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn("bigint")
     id_exercise: number;
     @Column("varchar", { length: 100, nullable: true })
     project_name: string;
@@ -103,18 +103,6 @@ export class Exercise {
     media_name: string;
     @Column("varchar", { length: 100, nullable: true })
     media_type: string;
-    @Column("int", { default : 0})
-    selected_id_env: number;
-}
-
-@Entity()
-export class Exercise_Environtment{
-    @PrimaryGeneratedColumn()
-    id_environtment: number;
-    @Column("varchar", { length: 100, nullable: true })
-    nama_environtment: string;
-    @Column("int")
-    id_exercise: number;
 }
 
 export const connectDB = new DataSource({
@@ -124,7 +112,7 @@ export const connectDB = new DataSource({
     username: DatabaseProperty.username,
     password: DatabaseProperty.password,
     database: DatabaseProperty.database,
-    entities: [Join_User, Uservmt, Archive_Report, Scenario_Action, Exercise, Exercise_Environtment],
+    entities: [Join_User, Uservmt, Archive_Report, Scenario_Action, Exercise],
     synchronize: true,
     logging: false
 });
