@@ -214,67 +214,67 @@ class MediaController {
     // }
 
     //Get video media vmt actions filename
-    async getVideoName(object_name: string ){
-       
+    async getVideoName(object_name: string) {
+
         const video_vmt = await connectDB
 
-        .getRepository(Scenario_Action)
-        .createQueryBuilder("scenario_action")
-        .where("scenario_action.actions_name = :name", { name: object_name })
-        .andWhere("scenario_action.type = 'Video'")
-        .getOne();
-        
-        if(video_vmt){
+            .getRepository(Scenario_Action)
+            .createQueryBuilder("scenario_action")
+            .where("scenario_action.actions_name = :name", { name: object_name })
+            .andWhere("scenario_action.type = 'Video'")
+            .getOne();
+
+        if (video_vmt) {
             return video_vmt.media_name;
-        }   
+        }
     }
 
     //Get video media vmt exercise filename
-    async getVideoExerciseName(object_name: string ){
-       
+    async getVideoExerciseName(object_name: string) {
+
         const video_vmt_exercise = await connectDB
 
-        .getRepository(Exercise)
-        .createQueryBuilder("exercise")
-        .where("exercise.project_name = :name", { name: object_name })
-        .andWhere("exercise.media_type = 'Video'")
-        .getOne();
-        
-        if(video_vmt_exercise){
+            .getRepository(Exercise)
+            .createQueryBuilder("exercise")
+            .where("exercise.project_name = :name", { name: object_name })
+            .andWhere("exercise.media_type = 'Video'")
+            .getOne();
+
+        if (video_vmt_exercise) {
             return video_vmt_exercise.media_name;
-        }   
+        }
     }
 
     //Get picture media vmt actions filename
-    async getPictureName(object_name: string ){
-       
+    async getPictureName(object_name: string) {
+
         const picture_vmt = await connectDB
 
-        .getRepository(Scenario_Action)
-        .createQueryBuilder("scenario_action")
-        .where("scenario_action.actions_name = :name", { name: object_name })
-        .andWhere("scenario_action.type = 'Picture'")
-        .getOne();
-    
-        if(picture_vmt){
+            .getRepository(Scenario_Action)
+            .createQueryBuilder("scenario_action")
+            .where("scenario_action.actions_name = :name", { name: object_name })
+            .andWhere("scenario_action.type = 'Picture'")
+            .getOne();
+
+        if (picture_vmt) {
             return picture_vmt.media_name;
-        }   
+        }
     }
 
     //Get picture media vmt exercise filename
-    async getPictureExerciseName(object_name: string ){
-       
+    async getPictureExerciseName(object_name: string) {
+
         const picture_vmt_exercise = await connectDB
 
-        .getRepository(Exercise)
-        .createQueryBuilder("exercise")
-        .where("exercise.project_name = :name", { name: object_name })
-        .andWhere("exercise.media_type = 'Picture'")
-        .getOne();
-    
-        if(picture_vmt_exercise){
+            .getRepository(Exercise)
+            .createQueryBuilder("exercise")
+            .where("exercise.project_name = :name", { name: object_name })
+            .andWhere("exercise.media_type = 'Picture'")
+            .getOne();
+
+        if (picture_vmt_exercise) {
             return picture_vmt_exercise.media_name;
-        }   
+        }
     }
 
     // public retrieve_video_vmt = async (req: Request, res: Response): Promise<Response> => {
@@ -307,7 +307,7 @@ class MediaController {
                 .where("scenario_action.actions_name = :name", { name: object_name })
                 .andWhere("scenario_action.type = 'YouTube'")
                 .getOne();
-            
+
             if (!youtube_vmt) {
                 return helper.responseErr(res, 404, 'Youtube Link not found', null);
             }
@@ -330,7 +330,7 @@ class MediaController {
                 .where("exercise.project_name = :name", { name: object_name })
                 .andWhere("exercise.media_type = 'YouTube'")
                 .getOne();
-            
+
             if (!youtube_vmt_exercise) {
                 return helper.responseErr(res, 404, 'Youtube Link Exercise not found', null);
             }
@@ -352,7 +352,7 @@ class MediaController {
                 .createQueryBuilder("scenario_action")
                 .where("scenario_action.actions_name = :name", { name: object_name })
                 .getOne();
-            
+
             if (!media_type_vmt) {
                 return helper.responseErr(res, 404, 'Video not found', null);
             }
@@ -374,7 +374,7 @@ class MediaController {
                 .createQueryBuilder("exercise")
                 .where("exercise.project_name = :name", { name: object_name })
                 .getOne();
-            
+
             if (!exercise) {
                 return helper.responseErr(res, 404, 'eror get exercise!!', null);
             }

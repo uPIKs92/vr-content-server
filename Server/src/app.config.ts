@@ -12,13 +12,15 @@ import fs from "fs";
 /**
  * Import your Room files
  */
-import { Menu } from "./rooms/MenuRoom";
+import { Menu, MenuRoom } from "./rooms/MenuRoom";
 import { Register } from "./rooms/RegisterRoom";
+import { Room, Client, ClientArray, ServerError } from "colyseus";
 // import { DataSource } from "typeorm";
 // import { Join_User, Register_User } from "./Database/ConnectDB";
-import { Join_User, Uservmt, connectDB } from "./Database/ConnectDB";
+import { Exercise, Exercise_Environtment, Join_User, Uservmt, connectDB } from "./Database/ConnectDB";
 import MediaController from "./Database/MediaController";
 import DatabaseProperty from "./Database/DatabaseProperty";
+import { MenuState } from "./rooms/schema/MenuState";
 
 export default config({
     getId: () => "Your Colyseus App",
@@ -290,6 +292,38 @@ export default config({
 
         app.get('/api/database/serverdb', (req, res) => {
             res.send(DatabaseProperty);
+        });
+
+        app.get('/api/environtment/:exercise_name', async (req, res) => {
+            const exercise_name = req.params.exercise_name;
+
+            const exercise = await connectDB
+
+                .getRepository(Exercise)
+                .createQueryBuilder("exercise")
+                .where("exercise.project_name = :name", { name: exercise_name })
+                .getOne();
+
+            if (exercise) {
+                const exercise_env = await connectDB
+
+                    .getRepository(Exercise_Environtment)
+                    .createQueryBuilder("exercise_environtment")
+                    .where("exercise_environtment.id_environtment = :id", { id: exercise.selected_id_env })
+                    .getOne();
+
+                if (exercise_env) {
+                    res.send(exercise_env.nama_environtment)
+                } else {
+                    res.status(404).json({ error: 'Exercise Environtment Selected Not Found' });
+                }
+            } else {
+                res.status(404).json({ error: 'Exercise For Environtment Not Found' });
+            }
+        })
+
+        app.get('/api/active_room_id', async (req, res) => {
+            res.send(MenuRoom.getListRoomID());
         });
     },
 
