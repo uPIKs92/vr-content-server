@@ -325,6 +325,10 @@ export default config({
         app.get('/api/active_room_id', async (req, res) => {
             res.send(MenuRoom.getListRoomID());
         });
+
+        app.get('/api/active_room_data', async (req, res) => {
+            res.send(MenuRoom.getListRoomID_());
+        });
     },
 
     beforeListen: async () => {

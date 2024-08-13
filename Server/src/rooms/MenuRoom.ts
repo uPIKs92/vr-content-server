@@ -109,11 +109,16 @@ export class Menu extends Room<MenuState> {
         connectDB.synchronize().then(async () => {
             const joinUser = new Join_User()
             joinUser.username = options.username,
-            joinUser.room_id = this.roomId
+                joinUser.room_id = this.roomId
 
             const uservmtRepo = connectDB.getRepository(Join_User);
             await uservmtRepo.save(joinUser);
             console.log("berhasil menyimpan")
+
+            if (options.id_user == 0) {
+                MenuRoom.addListRoomID_(this.roomId, this.valueName);
+                console.log("berhasil menyimpan RoomID")
+            }
         })
     }
 
@@ -128,17 +133,24 @@ export class Menu extends Room<MenuState> {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
         this.state.clear();
         MenuRoom.deleteListRoomID(this.roomId);
+        MenuRoom.deleteListRoomID_(this.roomId);
         console.log("room", this.roomId, "disposing...");
     }
-
-
 }
 
 export class MenuRoom {
     static ListRoomID: string[] = new Array<string>();
+    static ListRoomID_: RoomID[] = new Array<RoomID>();
 
     public static addListRoomID(roomID: string) {
         this.ListRoomID.push(roomID);
+    }
+
+    public static addListRoomID_(roomID: string, ownerRoom: string) {
+        let room = new RoomID();
+        room.roomID = roomID;
+        room.ownerRoom = ownerRoom;
+        this.ListRoomID_.push(room);
     }
 
     public static deleteListRoomID(roomID: string) {
@@ -153,7 +165,28 @@ export class MenuRoom {
         this.ListRoomID.splice(indexTheItem, 1);
     }
 
+    public static deleteListRoomID_(roomID: string) {
+        let indexTheItem = 0;
+
+        for (let index = 0; index < this.ListRoomID_.length; index++) {
+            if (this.ListRoomID_[index].roomID == roomID) {
+                indexTheItem = index;
+            }
+        }
+
+        this.ListRoomID_.splice(indexTheItem, 1);
+    }
+
     public static getListRoomID(): string[] {
         return this.ListRoomID;
     }
+
+    public static getListRoomID_(): RoomID[] {
+        return this.ListRoomID_;
+    }
+}
+
+export class RoomID {
+    public roomID: string;
+    public ownerRoom: string;
 }
