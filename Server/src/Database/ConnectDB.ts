@@ -119,6 +119,34 @@ export class Exercise_Environtment {
     id_exercise: number;
 }
 
+@Entity()
+export class Testingvmt {
+    @PrimaryGeneratedColumn()
+    id: number;
+    @Column("varchar", { length: 50, nullable: true })
+    action: string;
+    @Column("varchar", { length: 50, nullable: true })
+    time: string;
+    @Column("varchar", { length: 15, nullable: true })
+    username: string;
+    @Column("varchar", { length: 15, nullable: true })
+    assistance: string;
+    @Column("varchar", { length: 50, nullable: true })
+    error_level: string;
+    @Column("varchar", { length: 50, nullable: true })
+    status: string;
+    @Column("varchar", { length: 50, nullable: true })
+    id_exercise: string;
+    @Column("varchar", { length: 100, nullable: true })
+    scenario: string;
+    @Column("varchar", { length: 50, nullable: true })
+    date: string;
+    @Column("varchar", { length: 100, nullable: true })
+    id_report: string;
+    @Column("varchar", { length: 100, nullable: true })
+    exercise: string;
+}
+
 export const connectDB = new DataSource({
     type: 'postgres',
     host: DatabaseProperty.host,
@@ -126,7 +154,7 @@ export const connectDB = new DataSource({
     username: DatabaseProperty.username,
     password: DatabaseProperty.password,
     database: DatabaseProperty.database,
-    entities: [Join_User, Uservmt, Archive_Report, Scenario_Action, Exercise, Exercise_Environtment],
+    entities: [Join_User, Uservmt, Archive_Report, Scenario_Action, Exercise, Exercise_Environtment, Testingvmt],
     synchronize: true,
     logging: false
 });

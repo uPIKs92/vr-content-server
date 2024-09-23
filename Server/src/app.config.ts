@@ -1,13 +1,11 @@
 import config from "@colyseus/tools";
-
 import { WebSocketTransport } from "@colyseus/ws-transport";
 import { monitor } from "@colyseus/monitor";
 import path from "path";
 import Express from "express";
 import fs from "fs";
-
-// import { RedisDriver } from "@colyseus/redis-driver";
-// import { RedisPresence } from "@colyseus/redis-presence";
+import { RedisDriver } from "@colyseus/redis-driver";
+import { RedisPresence } from "@colyseus/redis-presence";
 
 /**
  * Import your Room files
@@ -15,12 +13,11 @@ import fs from "fs";
 import { Menu, MenuRoom } from "./rooms/MenuRoom";
 import { Register } from "./rooms/RegisterRoom";
 import { Room, Client, ClientArray, ServerError } from "colyseus";
-// import { DataSource } from "typeorm";
-// import { Join_User, Register_User } from "./Database/ConnectDB";
-import { Exercise, Exercise_Environtment, Join_User, Uservmt, connectDB } from "./Database/ConnectDB";
+import { Archive_Report, Exercise, Exercise_Environtment, Join_User, Testingvmt, Uservmt, connectDB } from "./Database/ConnectDB";
 import MediaController from "./Database/MediaController";
 import DatabaseProperty from "./Database/DatabaseProperty";
 import { MenuState } from "./rooms/schema/MenuState";
+import { Between } from "typeorm";
 
 export default config({
     getId: () => "Your Colyseus App",
@@ -68,16 +65,16 @@ export default config({
         // Upload Video
         app.post("/api/video/:id_unique_report", MediaController.upload, MediaController.handleUpload);
 
-        //Upload video VMT
+        // Upload video VMT
         app.post("/api/video_vmt/:id", MediaController.upload_video_vmt, MediaController.handleUpload_video_vmt);
 
-        //Upload video VMT Exercise
+        // Upload video VMT Exercise
         app.post("/api/video_vmt_exercise/:id", MediaController.upload_video_vmt_exercise, MediaController.handleUpload_video_vmt_exercise);
 
-        //Upload picture VMT
+        // Upload picture VMT
         app.post("/api/picture_vmt/:id", MediaController.upload_picture_vmt, MediaController.handleUpload_picture_vmt);
 
-        //Upload picture VMT Exercise
+        // Upload picture VMT Exercise
         app.post("/api/picture_vmt_exercise/:id", MediaController.upload_picture_vmt_exercise, MediaController.handleUpload_picture_vmt_exercise);
 
         // Upload File Replay
@@ -202,32 +199,28 @@ export default config({
             }
         });
 
-        //Retrieve Addresables Bundle
-        app.get('/api/addresables/stream/StandaloneWindows64/:dirname', (req, res) => {
-            const dirname = req.params.dirname;
-            const addresables_path = path.join(__dirname, '../addresables/StandaloneWindows64', dirname);
-
-            if (fs.existsSync(addresables_path)) {
-                res.setHeader('Content-Type', 'bundle/json/hash');
-                res.setHeader('Content-Disposition', `attachment; filename=${dirname}`);
-
-                const fileStream = fs.createReadStream(addresables_path);
-                fileStream.pipe(res);
-
-                // let fileEnts: fs.Dirent[] = await fs.promises.readdir(addresables_path, { withFileTypes: true });
-                // let fileNames: string[] = fileEnts
-                //     .filter(fileEnt => fileEnt.isFile())
-                //     .map(fileEnt => fileEnt.name);
-                // const Files = fileNames.map(path => ({
-                //     readStream: fs.createReadStream(path)
-                // }))
-                // Files.forEach(src => 
-                //     src.readStream.pipe(res));
-
-            } else {
-                res.status(404).json({ error: 'Addresable Bundle not found' });
-            }
-        });
+        // Retrieve Addresables Bundle
+        // app.get('/api/addresables/stream/StandaloneWindows64/:dirname', (req, res) => {
+        //     const dirname = req.params.dirname;
+        //     const addresables_path = path.join(__dirname, '../addresables/StandaloneWindows64', dirname);
+        //     if (fs.existsSync(addresables_path)) {
+        //         res.setHeader('Content-Type', 'bundle/json/hash');
+        //         res.setHeader('Content-Disposition', `attachment; filename=${dirname}`);
+        //         const fileStream = fs.createReadStream(addresables_path);
+        //         fileStream.pipe(res);
+        //         // let fileEnts: fs.Dirent[] = await fs.promises.readdir(addresables_path, { withFileTypes: true });
+        //         // let fileNames: string[] = fileEnts
+        //         //     .filter(fileEnt => fileEnt.isFile())
+        //         //     .map(fileEnt => fileEnt.name);
+        //         // const Files = fileNames.map(path => ({
+        //         //     readStream: fs.createReadStream(path)
+        //         // }))
+        //         // Files.forEach(src => 
+        //         //     src.readStream.pipe(res));
+        //     } else {
+        //         res.status(404).json({ error: 'Addresable Bundle not found' });
+        //     }
+        // });
 
         // Retrieve Video
         // app.get("/api/video/:path", VideoController.retrieve);
@@ -244,16 +237,16 @@ export default config({
         // List File Replay
         // app.get("/api/replayfile/", VideoController.listFileReplay);
 
-        //Retrieve Youtube Link
+        // Retrieve Youtube Link
         app.get("/api/youtube_link_vmt/:object_name", MediaController.retrieve_youtube_link_vmt);
 
-        //Retrieve Media Type
+        // Retrieve Media Type
         app.get("/api/media_type/:object_name", MediaController.retrieve_media_type_vmt);
 
-        //Retrieve Deskripsi Exercise
+        // Retrieve Deskripsi Exercise
         app.get("/api/exercise_deskripsi/:object_name", MediaController.get_deskripsi);
 
-        //Retrieve Youtube Link Exercise
+        // Retrieve Youtube Link Exercise
         app.get("/api/youtube_link_vmt_exercise/:object_name", MediaController.retrieve_youtube_link_vmt_exercise);
 
         // Delete Video
@@ -328,6 +321,33 @@ export default config({
 
         app.get('/api/active_room_data', async (req, res) => {
             res.send(MenuRoom.getListRoomID_());
+        });
+
+        app.post('/api/Report_CreateData', async (req, res) => {
+            const Testingvmtrepo = connectDB.getRepository(Testingvmt)
+            const Added_Data = await Testingvmtrepo.create(req.body)
+            await Testingvmtrepo.save(Added_Data);
+            console.log("Data Action/Step Added");
+        });
+
+        app.post('/api/Report_UpdateData/:action/:username/:id_exercise/:scenario/:id_report/:exercise', async (req, res) => {
+            const action = req.params.action;
+            const username = req.params.username;
+            const id_exercise = req.params.id_exercise;
+            const scenario = req.params.scenario;
+            const id_report = req.params.id_report;
+            const exercise = req.params.exercise;
+            const Find_Parameter = new Testingvmt()
+            Find_Parameter.action = action;
+            Find_Parameter.username = username;
+            Find_Parameter.id_exercise = id_exercise;
+            Find_Parameter.scenario = scenario;
+            Find_Parameter.id_report = id_report;
+            Find_Parameter.exercise = exercise;
+            const Testingvmtrepo = await connectDB.getRepository(Testingvmt).findOneBy(Find_Parameter)
+            connectDB.getRepository(Testingvmt).merge(Testingvmtrepo, req.body)
+            await connectDB.getRepository(Testingvmt).save(Testingvmtrepo);
+            console.log("Data Action/Step Updated");
         });
     },
 
