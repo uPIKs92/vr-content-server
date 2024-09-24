@@ -11,6 +11,10 @@ export class Join_User {
     username: string;
     @Column("varchar", { length: 100, nullable: true })
     room_id: string;
+    @Column("varchar", { length: 50, nullable: true })
+    id_exercise: string;
+    @Column("varchar", { length: 100, nullable: true })
+    id_report: string;
 }
 
 @Entity()

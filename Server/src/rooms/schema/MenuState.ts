@@ -157,7 +157,7 @@ export class MenuState extends Schema {
         }));
     }
 
-    sendAction(sender: string, option: any) {
+    async sendAction(sender: string, option: any) {
         this.actions.set(sender, new Action().assign({
             action: option.action,
             status: option.status,
@@ -170,9 +170,27 @@ export class MenuState extends Schema {
             progress: option.progress,
             is_sub_action: option.is_sub_action
         }))
+
+        const student = option.username;
+        const Find_Parameter = new Join_User()
+        Find_Parameter.username = student;
+
+        let id_exercise = "";
+        let id_report = "";
+        const Updated_Join_User = new Join_User()
+        Updated_Join_User.id_exercise = id_exercise;
+        Updated_Join_User.id_report = id_report;
+
+        const finished = new Boolean(option.finished)
+        if (finished == true) {
+            const Join_User_Repo = await connectDB.getRepository(Join_User).findOneBy(Find_Parameter)
+            connectDB.getRepository(Join_User).merge(Join_User_Repo, Updated_Join_User)
+            await connectDB.getRepository(Join_User).save(Join_User_Repo);
+            console.log("Join User Updated On Finished");
+        }
     }
 
-    sendExercise(sender: string, option: any) {
+    async sendExercise(sender: string, option: any) {
         this.exercise.set(sender, new Exercise().assign({
             student: option.student,
             instructor: option.instructor,
@@ -187,5 +205,36 @@ export class MenuState extends Schema {
             exercise_name: option.exercise_name,
             index_scenario: option.index_scenario
         }))
+
+        const student = option.student;
+        const Find_Parameter = new Join_User()
+        Find_Parameter.username = student;
+
+        let id_exercise = option.id_exercise;
+        let id_report = option.id_unique_report;
+
+        const is_interupt = new Boolean(option.is_interupt)
+        if (is_interupt == true) {
+            id_exercise = "";
+            id_report = "";
+
+            const Updated_Join_User = new Join_User()
+            Updated_Join_User.id_exercise = id_exercise;
+            Updated_Join_User.id_report = id_report;
+
+            const Join_User_Repo = await connectDB.getRepository(Join_User).findOneBy(Find_Parameter)
+            connectDB.getRepository(Join_User).merge(Join_User_Repo, Updated_Join_User)
+            await connectDB.getRepository(Join_User).save(Join_User_Repo);
+            console.log("Join User Updated On Interupt");
+        } else {
+            const Updated_Join_User = new Join_User()
+            Updated_Join_User.id_exercise = id_exercise;
+            Updated_Join_User.id_report = id_report;
+
+            const Join_User_Repo = await connectDB.getRepository(Join_User).findOneBy(Find_Parameter)
+            connectDB.getRepository(Join_User).merge(Join_User_Repo, Updated_Join_User)
+            await connectDB.getRepository(Join_User).save(Join_User_Repo);
+            console.log("Join User Updated On Assigned");
+        }
     }
 }
