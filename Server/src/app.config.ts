@@ -243,6 +243,9 @@ export default config({
         // Retrieve Media Type
         app.get("/api/media_type/:object_name", MediaController.retrieve_media_type_vmt);
 
+        // Retrieve Media Name
+        app.get("/api/media_name/:object_name", MediaController.retrieve_media_name_vmt);
+
         // Retrieve Deskripsi Exercise
         app.get("/api/exercise_deskripsi/:object_name", MediaController.get_deskripsi);
 

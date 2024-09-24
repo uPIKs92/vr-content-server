@@ -363,6 +363,28 @@ class MediaController {
         }
     }
 
+    //Get media name vmt actions
+    public retrieve_media_name_vmt = async (req: Request, res: Response): Promise<Response> => {
+        try {
+            const { object_name } = req.params;
+
+            const media_name_vmt = await connectDB
+
+                .getRepository(Scenario_Action)
+                .createQueryBuilder("scenario_action")
+                .where("scenario_action.actions_name = :name", { name: object_name })
+                .getOne();
+
+            if (!media_name_vmt) {
+                return helper.responseErr(res, 404, 'Video not found', null);
+            }
+
+            return res.send(media_name_vmt.media_name)
+        } catch (e: any) {
+            return helper.responseErr(res, 500, e.message, e.errors);
+        }
+    }
+
     //Get deskripsi vmt exercise
     public get_deskripsi = async (req: Request, res: Response): Promise<Response> => {
         try {
